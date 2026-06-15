@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Housing 2 — Brief Tag Test</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --green: #1D9E75;
+    --green-dark: #0F6E56;
+    --green-light: #E1F5EE;
+    --green-border: #5DCAA5;
+    --green-text: #085041;
+    --bg: #ffffff;
+    --bg-secondary: #f7f7f5;
+    --text: #1a1a1a;
+    --text-secondary: #666;
+    --text-tertiary: #999;
+    --border: rgba(0,0,0,0.12);
+    --border-hover: rgba(0,0,0,0.25);
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a;
+      --bg-secondary: #252523;
+      --text: #f0efea;
+      --text-secondary: #a0a09a;
+      --text-tertiary: #666;
+      --border: rgba(255,255,255,0.12);
+      --border-hover: rgba(255,255,255,0.25);
+      --green-light: #0a2e22;
+      --green-text: #9FE1CB;
+      --green-border: #0F6E56;
+    }
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg-secondary);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 1rem;
+  }
+  .container { max-width: 560px; margin: 0 auto; }
+  header { text-align: center; padding: 2rem 0 1.5rem; }
+  header h1 { font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  header p { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+  .name-card {
+    background: var(--bg);
+    border-radius: var(--radius-lg);
+    border: 0.5px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .name-card label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+  .name-card input {
+    width: 100%; padding: 10px 12px;
+    border-radius: var(--radius); border: 0.5px solid var(--border);
+    background: var(--bg); color: var(--text); font-size: 15px; outline: none;
+    transition: border-color 0.15s;
+  }
+  .name-card input:focus { border-color: var(--green); }
+  .card {
+    background: var(--bg);
+    border-radius: var(--radius-lg);
+    border: 0.5px solid var(--border);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  .progress-wrap { margin-bottom: 1.5rem; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.3s ease; }
+  .client-step { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+  .brief-box {
+    background: var(--bg-secondary);
+    border-left: 3px solid var(--green);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 12px 14px;
+    font-size: 15px; line-height: 1.6;
+    color: var(--text); font-style: italic;
+    margin-bottom: 1.25rem;
+  }
+  .question { font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-bottom: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 1.25rem; }
+  .chip {
+    display: inline-flex; align-items: center;
+    padding: 6px 12px; border-radius: 99px; font-size: 14px;
+    cursor: pointer; border: 0.5px solid var(--border-hover);
+    background: var(--bg); color: var(--text-secondary);
+    transition: all 0.12s; user-select: none;
+    -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+  }
+  .chip:hover { border-color: var(--green-border); color: var(--text); }
+  .chip:active { transform: scale(0.95); }
+  .chip.selected { border-color: var(--green-dark); background: var(--green-light); color: var(--green-text); font-weight: 500; }
+  .notes-label { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+  .notes-input {
+    width: 100%; padding: 9px 12px;
+    border-radius: var(--radius); border: 0.5px solid var(--border);
+    background: var(--bg); color: var(--text); font-size: 13px;
+    resize: none; outline: none; margin-bottom: 1.25rem;
+    font-family: inherit; line-height: 1.5;
+  }
+  .notes-input:focus { border-color: var(--green); }
+  .nav { display: flex; gap: 8px; }
+  .nav button {
+    flex: 1; padding: 11px; border-radius: var(--radius);
+    font-size: 15px; font-weight: 500; cursor: pointer;
+    border: 0.5px solid var(--border-hover);
+    background: var(--bg); color: var(--text);
+    transition: background 0.12s;
+  }
+  .nav button:hover { background: var(--bg-secondary); }
+  .nav button:active { transform: scale(0.98); }
+  .nav button:disabled { opacity: 0.3; cursor: default; }
+  .btn-start, .btn-next { background: var(--green) !important; color: #fff !important; border-color: var(--green) !important; }
+  .btn-start:hover, .btn-next:hover { background: var(--green-dark) !important; }
+  .summary-header { text-align: center; padding: 1.5rem 0 1rem; }
+  .summary-icon { width: 48px; height: 48px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 22px; color: var(--green-text); }
+  .summary-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .summary-sub { font-size: 14px; color: var(--text-secondary); }
+  .summary-card { background: var(--bg); border-radius: var(--radius-lg); border: 0.5px solid var(--border); padding: 1rem 1.25rem; margin-bottom: 10px; }
+  .summary-num { font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px; }
+  .summary-brief { font-size: 13px; color: var(--text-secondary); font-style: italic; margin-bottom: 8px; line-height: 1.5; }
+  .summary-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
+  .summary-chip { font-size: 12px; padding: 3px 9px; border-radius: 99px; background: var(--green-light); color: var(--green-text); border: 0.5px solid var(--green-border); }
+  .none-chip { background: var(--bg-secondary); color: var(--text-tertiary); border-color: var(--border); }
+  .summary-note { font-size: 12px; color: var(--text-secondary); padding-top: 6px; border-top: 0.5px solid var(--border); margin-top: 4px; }
+  .copy-btn { width: 100%; padding: 12px; border-radius: var(--radius); font-size: 15px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--border-hover); background: var(--bg); color: var(--text); margin-top: 1rem; margin-bottom: 2rem; transition: background 0.12s; }
+  .copy-btn:hover { background: var(--bg-secondary); }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Housing 2 — Brief Tag Test</h1>
+    <p>For each client brief, select the tags you think describe what they want in their home.</p>
+  </header>
+
+  <div id="name-screen">
+    <div class="name-card">
+      <label for="tester-name">Your name (so we know who responded)</label>
+      <input type="text" id="tester-name" placeholder="First name is fine" autocomplete="off" />
+      <div class="nav" style="margin-top:1rem">
+        <button class="btn-start" onclick="startTest()">Start →</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="quiz-screen" class="hidden">
+    <div class="card">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="progress-label"></span>
+          <span id="progress-pct"></span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+      <div class="brief-box" id="client-brief"></div>
+      <div class="question">Which tags match what this client wants?</div>
+      <div class="chips" id="chips"></div>
+      <div class="notes-label">Any notes on what you feel the client wants? <span style="color:var(--text-tertiary)">(optional)</span></div>
+      <textarea class="notes-input" id="notes" rows="2" placeholder="Write anything that comes to mind…"></textarea>
+      <div class="nav">
+        <button id="btn-prev" onclick="go(-1)" disabled>Back</button>
+        <button class="btn-next" id="btn-next" onclick="go(1)">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="summary-screen" class="hidden">
+    <div class="summary-header">
+      <div class="summary-icon">✓</div>
+      <div class="summary-title">All done!</div>
+      <div class="summary-sub" id="summary-sub"></div>
+    </div>
+    <div id="summary-cards"></div>
+    <button class="copy-btn" id="copy-btn" onclick="copyResults()">Copy results as text</button>
+  </div>
+</div>
+
+<script>
+const CLIENTS = [
+  "You know I am just looking for something functional and not too crowded. I don't really mind how it looks as long as I can sleep, eat, relax.",
+  "The kitchen is the heart of the home, that's where life happens. Everything else is noise. A tiny office space on the side would be lovely, but don't let it come at the kitchen's expense.",
+  "I've collected books my whole life. I need somewhere to sit surrounded by them and read by a good light. No television, please, I managed sixty years without one.",
+  "Don't ask me to choose, I love cute things and I'm obsessed with medieval stuff. I know it's an odd mix but I can't help it. I need this room to reflect that.",
+  "I just got dumped because apparently putting a cat plaid on her vintage couch is a toxic trait. I call it personality. She is not a loss… At least now I can do what I want.",
+  "N33D C0MPUT3R.. bip.. C4BL3S... M0TH3RB04RD... biiiiip 4L3RG1C T0 W4T3R... bip..bip.",
+  "I wish I could live in the Amazonian forest but sadly they don't do lofts there.",
+  "I'm Barbara. This is my cat Mr. Flamingo. We like long walks and bubble gum.",
+  "Hello.. me Tyler, Brian, and Kevin are finally getting our own place for college and we NEED a proper setup to... uh... work? And enough space to not hate each other by week 3.",
+  "BOO! Wait, did the lights just flicker? Turn them back on! Please! You think being dead is easy? I can't see my ectoplasm out here!",
+  "Braiiins... but are they organic? My arm just fell off. Is it infected? Got hand sanitizer? I can't get sick, I have no insurance!",
+  "Crush enemies? No, crush writer's block! Sunset brings melancholy to my brutal soul. Too vulnerable? Honest, or I'll rip your arms off!",
+  "HONK! Ahhh! Who squeaked?! Don't look in the mirror, a painted monster is mimicking my moves! Wait... IT'S ME! AHHHH! honk-honk-honk",
+  "Your living room is a crime scene of vibrancy! Drop the teal pillow or I'll neutralize this city with eggshell paint! Neutrality!",
+  "RED?! Again?! Such a tacky color! It ruins my pasture's feng shui! Put that rag away or I'll horn-toss you into the stratosphere!",
+  "All the trees I've cut, I don't want to think about them. I've changed! I'm leaving the forest behind, hopefully my back will thank me.",
+  "HUH? WHAT? SPEAK LOUDER! ANYWAY, BOOST THE BASS AND LET THE SODA FLOW, I WANNA DANCE!....WHAT?",
+  "I'll be an astronaut some day! The teacher says I have to be good at math. But I don't want to do math! Ok, maybe a little bit then.",
+  "Cooking isn't relaxing, it's a calling! From dusk 'till dawn the cutting n' brewing never stops. Food? Who's talking about food?",
+  "My birdies need some wing room, but they can't only perch on my head. Me, I'm happy if the door is tall enough and I won't break anything.",
+  "One day my talent will dazzle the world! I just have to find what it is. I will stop at nothing to become the best at something!",
+  "The planets are perfectly aligned for a room makeover! I'm starting a card reading business from home, so I need a table to consult; the room needs to feel deeply connected to the cosmos."
+];
+
+const TAGS = ["Pink","Beige","White","Red","Blue","Black","Wood","Metal","Plastic","Glass","Water","Kitchen","Office","Living Room","Bedroom","Bookshelf","Armchair","Lamp","Rug","Desk","Chair","Mirror","TV Stand","Table","Fridge","Tech","Decorative","Music","Disco","Mystical","Cosmic","Mystic","Kawaii","Medieval","Space","Modern","Beach","Lotus","Cottage","Tall","Sturdy","Plant","Organic","Bird","Hygiene","Dirty","Food","Bathroom","Instrument","Sport","Art","Reflective"];
+
+let current = 0;
+let testerName = '';
+const answers = CLIENTS.map(() => new Set());
+const notes = CLIENTS.map(() => '');
+
+function startTest() {
+  testerName = document.getElementById('tester-name').value.trim() || 'Anonymous';
+  document.getElementById('name-screen').classList.add('hidden');
+  document.getElementById('quiz-screen').classList.remove('hidden');
+  loadClient();
+}
+
+function loadClient() {
+  const pct = Math.round((current / CLIENTS.length) * 100);
+  document.getElementById('progress-label').textContent = 'Brief ' + (current + 1) + ' of ' + CLIENTS.length;
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('client-brief').textContent = CLIENTS[current];
+  document.getElementById('notes').value = notes[current];
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').textContent = current === CLIENTS.length - 1 ? 'See results →' : 'Next →';
+
+  const container = document.getElementById('chips');
+  container.innerHTML = '';
+  TAGS.forEach(tag => {
+    const el = document.createElement('div');
+    el.className = 'chip' + (answers[current].has(tag) ? ' selected' : '');
+    el.textContent = tag;
+    el.addEventListener('click', () => {
+      if (answers[current].has(tag)) {
+        answers[current].delete(tag);
+        el.classList.remove('selected');
+      } else {
+        answers[current].add(tag);
+        el.classList.add('selected');
+      }
+    });
+    container.appendChild(el);
+  });
+}
+
+function go(dir) {
+  notes[current] = document.getElementById('notes').value;
+  if (dir === 1 && current === CLIENTS.length - 1) { showSummary(); return; }
+  current = Math.max(0, Math.min(CLIENTS.length - 1, current + dir));
+  loadClient();
+}
+
+function showSummary() {
+  document.getElementById('quiz-screen').classList.add('hidden');
+  document.getElementById('summary-screen').classList.remove('hidden');
+  document.getElementById('summary-sub').textContent = testerName + "'s responses — " + CLIENTS.length + " briefs";
+
+  const cards = CLIENTS.map((brief, i) => {
+    const tags = [...answers[i]];
+    const chips = tags.length
+      ? tags.map(t => `<span class="summary-chip">${t}</span>`).join('')
+      : `<span class="summary-chip none-chip">No tags selected</span>`;
+    const note = notes[i] ? `<div class="summary-note">💬 ${notes[i]}</div>` : '';
+    return `<div class="summary-card">
+      <div class="summary-num">Brief ${i + 1}</div>
+      <div class="summary-brief">${brief}</div>
+      <div class="summary-chips">${chips}</div>${note}
+    </div>`;
+  }).join('');
+
+  document.getElementById('summary-cards').innerHTML = cards;
+}
+
+function copyResults() {
+  const lines = [
+    'Housing 2 — Brief Tag Test',
+    'Respondent: ' + testerName,
+    'Date: ' + new Date().toLocaleDateString(),
+    ''
+  ];
+  CLIENTS.forEach((brief, i) => {
+    const tags = [...answers[i]].join(', ') || 'none';
+    const note = notes[i] ? '\n   Notes: ' + notes[i] : '';
+    lines.push('Brief ' + (i + 1) + ': ' + tags + note);
+  });
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied to clipboard!';
+    setTimeout(() => { btn.textContent = 'Copy results as text'; }, 2500);
+  });
+}
+
+document.getElementById('tester-name').addEventListener('keydown', e => {
+  if (e.key === 'Enter') startTest();
+});
+</script>
+</body>
+</html>
