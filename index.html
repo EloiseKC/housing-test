@@ -85,6 +85,14 @@
   .status-sending { background: var(--bg-secondary); color: var(--text-secondary); }
   .status-ok { background: var(--green-light); color: var(--green-text); }
   .status-error { background: #FCEBEB; color: #A32D2D; }
+
+  .rating-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+  .rating-label { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
+  .rating-btns { display: flex; gap: 8px; }
+  .rating-btn { padding: 6px 16px; border-radius: 99px; font-size: 18px; cursor: pointer; border: 0.5px solid var(--border-hover); background: var(--bg); transition: all 0.12s; user-select: none; -webkit-tap-highlight-color: transparent; }
+  .rating-btn:active { transform: scale(0.92); }
+  .rating-btn.selected-up { border-color: #1D9E75; background: #E1F5EE; }
+  .rating-btn.selected-down { border-color: #C0392B; background: #FCEBEB; }
   .hidden { display: none; }
 </style>
 </head>
@@ -122,6 +130,13 @@
         </div>
       </div>
       <div class="brief-box" id="client-brief"></div>
+      <div class="rating-wrap">
+        <span class="rating-label">Do you enjoy this brief?</span>
+        <div class="rating-btns">
+          <div class="rating-btn" id="btn-up" onclick="setRating(1)">👍</div>
+          <div class="rating-btn" id="btn-down" onclick="setRating(-1)">👎</div>
+        </div>
+      </div>
       <div class="question">Which tags match what this client wants?</div>
       <div class="chips" id="chips"></div>
       <div class="notes-label">Any notes on what you feel the client wants? <span style="color:var(--text-tertiary)">(optional)</span></div>
@@ -145,7 +160,7 @@
 </div>
 
 <script>
-const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzBH_4nsvGtGl9uWhJn4QkT_ImJZgZv_YJJvMgXUq0pB6nly1XgnYG4wBGAfMI58oR0rA/exec";
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyDGNoqbInI9jg3Lxzmim3OCdzxeooU9kDjE5A480qP_GBXlIttto5NBw7clkhxngvLDw/exec";
 
 const CLIENTS = [
   { name: "Hank Calloway", portrait: "portraits/portrait_13.png", brief: "Just got dumped. Turns out my taste was 'too much'. Joke's on her, this is my place now and too much is exactly what I'm going for." },
@@ -154,7 +169,7 @@ const CLIENTS = [
   { name: "Granny?", portrait: "portraits/portrait_16.png", brief: "BOO! Wait, did the lights just flicker? Can you turn them back on please?! I can't see my ectoplasm out here!" },
   { name: "Mr Puddles", portrait: "portraits/portrait_19.png", brief: "HONK! Ahhh! Who squeaked?! Don't look in the mirror, a painted monster is mimicking my moves! Wait... IT'S ME! AHHHH!" },
   { name: "Jaxx", portrait: "portraits/portrait_02.png", brief: "HUH? WHAT? SPEAK LOUDER! ANYWAY, BOOST THE BASS AND LET THE SODA FLOW, I WANNA DANCE!..." },
-  { name: "Ugo", portrait: "portraits/portrait_12.png", brief: "I'll be an astronaut some day! The teacher says I have to be good at math. But I don't want to do math! Ok, maybe a little bit then." },
+  { name: "Tom", portrait: "portraits/portrait_12.png", brief: "I'll be an astronaut some day! The teacher says I have to be good at math. But I don't want to do math! Ok, maybe a little bit then." },
   { name: "André Excel", portrait: "portraits/portrait_34.png", brief: "My birds keep landing on my head because I'm so tall and that's risky because I'm so clumsy. We all need more space!" },
   { name: "Cornichon", portrait: "portraits/portrait_04.png", brief: "I decided to settle on your planet. I read the stars from home. I need a workplace that feels like deep space." },
   { name: "Dr Rainbow PhD", portrait: "portraits/portrait_23.png", brief: "Functionally I need surfaces for sleeping, eating, and resting. Clutter reduces efficiency. I'm frankly surprised that needs saying." },
@@ -165,11 +180,12 @@ const CLIENTS = [
   { name: "P1X13_FAN001", portrait: "portraits/portrait_39.png", brief: "OMG I can't wait to watch Pixie's stream her concert live! I'm obsessed! I bet no one will have a bedroom as cool as mine." },
 ];
 
-const TAGS = ["Pink","Beige","White","Red","Blue","Black","Wood","Metal","Plastic","Glass","Water","Kitchen","Office","Living Room","Bedroom","Bookshelf","Armchair","Lamp","Rug","Desk","Chair","Mirror","TV Stand","Table","Fridge","Tech","Decorative","Music","Disco","Mystical","Cosmic","Mystic","Kawaii","Medieval","Space","Modern","Beach","Lotus","Cottage","Tall","Sturdy","Plant","Organic","Bird","Hygiene","Dirty","Food","Bathroom","Instrument","Sport","Art","Reflective"];
+const TAGS = ["Pink","Green","Beige","White","Red","Blue","Black","Wood","Metal","Plastic","Glass","Water","Kitchen","Office","Living Room","Bedroom","Bookshelf","Armchair","Lamp","Rug","Desk","Chair","Mirror","TV Stand","Table","Fridge","Tech","Decorative","Music","Disco","Cosmic","Kawaii","Medieval","Space","Modern","Beach","Lotus","Cottage","Tall","Sturdy","Plant","Organic","Bird","Hygiene","Dirty","Food","Bathroom","Instrument","Sport","Art","Reflective","Cozy","Soft","Plushie","Hard"];
 
 let current = 0;
 let testerName = '';
 const answers = CLIENTS.map(() => new Set());
+const ratings = CLIENTS.map(() => null);
 const notes = CLIENTS.map(() => '');
 
 function startTest() {
@@ -192,6 +208,12 @@ function portraitHTML(portrait, size, cls) {
   return img;
 }
 
+
+function setRating(val) {
+  ratings[current] = val;
+  document.getElementById('btn-up').className = 'rating-btn' + (val === 1 ? ' selected-up' : '');
+  document.getElementById('btn-down').className = 'rating-btn' + (val === -1 ? ' selected-down' : '');
+}
 function loadClient() {
   const c = CLIENTS[current];
   const pct = Math.round((current / CLIENTS.length) * 100);
@@ -204,6 +226,8 @@ function loadClient() {
   document.getElementById('notes').value = notes[current];
   document.getElementById('btn-prev').disabled = current === 0;
   document.getElementById('btn-next').textContent = current === CLIENTS.length - 1 ? 'Submit →' : 'Next →';
+  document.getElementById('btn-up').className = 'rating-btn' + (ratings[current] === 1 ? ' selected-up' : '');
+  document.getElementById('btn-down').className = 'rating-btn' + (ratings[current] === -1 ? ' selected-down' : '');
 
   const wrap = document.getElementById('client-portrait-wrap');
   wrap.innerHTML = '';
@@ -243,7 +267,7 @@ function submitAndShow() {
   fetch(WEBHOOK_URL, {
     method: 'POST', mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ testerName, answers: CLIENTS.map((_, i) => ({ tags: [...answers[i]], notes: notes[i] || '' })) })
+    body: JSON.stringify({ testerName, answers: CLIENTS.map((_, i) => ({ tags: [...answers[i]], notes: notes[i] || '', rating: ratings[i] === 1 ? '👍' : ratings[i] === -1 ? '👎' : '' })) })
   })
   .then(() => { statusBox.className = 'status-box status-ok'; statusBox.textContent = '✓ Responses saved to the team sheet!'; })
   .catch(() => { statusBox.className = 'status-box status-error'; statusBox.textContent = '⚠ Could not save automatically. Please copy your results below.'; });
@@ -252,11 +276,12 @@ function submitAndShow() {
     const tags = [...answers[i]];
     const chips = tags.length ? tags.map(t => `<span class="summary-chip">${t}</span>`).join('') : `<span class="summary-chip none-chip">No tags selected</span>`;
     const note = notes[i] ? `<div class="summary-note">💬 ${notes[i]}</div>` : '';
+    const rating = ratings[i] !== null ? `<div class="summary-note">${ratings[i] === 1 ? '👍 Enjoyed the brief' : '👎 Did not enjoy the brief'}</div>` : '';
     const img = `<img src="${c.portrait}" class="summary-portrait" onerror="this.outerHTML='<div class=summary-portrait-placeholder>👤</div>'">`;
     return `<div class="summary-card">
       <div class="summary-client-header">${img}<div class="summary-client-name">${c.name}</div></div>
       <div class="summary-brief">${c.brief}</div>
-      <div class="summary-chips">${chips}</div>${note}
+      <div class="summary-chips">${chips}</div>${note}${rating}
     </div>`;
   }).join('');
 
